@@ -408,6 +408,96 @@
         // 초기 포커스
         messageInput.focus();
     </script>
+    <!-- 음성 대화 버튼 HTML -->
+<button id="voiceBtn" class="voice-btn">🎤 음성으로 찾기</button>
+
+<!-- 음성 대화 버튼 스타일 (CSS) -->
+<style>
+.voice-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #1769e0;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 15px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.voice-btn:hover {
+    background-color: #0f4eb3;
+    transform: translateY(-3px);
+}
+
+/* 마이크 작동 중일 때 나타나는 애니메이션 효과 */
+.voice-btn.recording {
+    background-color: #e74c3c;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(231, 76, 60, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+</style>
+
+<!-- 음성 인식 기능 (JavaScript) -->
+<script>
+const voiceBtn = document.getElementById('voiceBtn');
+
+// 브라우저의 Web Speech API 지원 여부 확인
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ko-KR'; // 한국어 인식 설정
+    
+    // 버튼 클릭 시 음성 인식 시작
+    voiceBtn.addEventListener('click', () => {
+        recognition.start();
+        voiceBtn.textContent = '🎙️ 듣고 있어요...';
+        voiceBtn.classList.add('recording');
+    });
+
+    // 음성 인식 성공 시 실행
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        
+        // 1. 화면에 인식된 결과창 띄우기
+        alert("음성 인식 결과: " + transcript);
+        
+        // 2. 만약 화면에 'searchInput'이라는 검색창이 있다면 자동 입력 후 검색 실행
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.value = transcript;
+            // searchJobs(); // 검색 함수가 있다면 주석을 해제하여 자동 검색 실행 가능
+        }
+    };
+
+    // 음성 인식 종료 또는 에러 시 버튼 상태 원상복구
+    recognition.onspeechend = () => resetBtn();
+    recognition.onerror = () => {
+        alert('음성을 인식하지 못했습니다. 마이크 권한을 확인해주세요.');
+        resetBtn();
+    };
+
+    function resetBtn() {
+        voiceBtn.textContent = '🎤 음성으로 찾기';
+        voiceBtn.classList.remove('recording');
+    }
+} else {
+    voiceBtn.addEventListener('click', () => {
+        alert("현재 사용 중인 브라우저에서는 음성 인식을 지원하지 않습니다. (Chrome, Edge 권장)");
+    });
+}
+</script>
 </body>
 </html>
 
