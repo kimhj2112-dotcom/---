@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음성 인식 AI 비서</title>
+    <title>AI 모델 선택 음성 비서</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0f172a;
@@ -24,48 +20,56 @@
             background: #1e293b;
             width: 100%;
             max-width: 480px;
-            padding: 30px;
+            padding: 25px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             text-align: center;
         }
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #38bdf8;
+        h1 { font-size: 1.4rem; margin-bottom: 15px; color: #38bdf8; }
+        
+        /* 모델 선택 및 설정 스타일 */
+        .setting-box {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+            border: 1px solid #334155;
         }
+        label { font-size: 0.8rem; color: #94a3b8; font-weight: bold; display: block; margin-bottom: 5px; }
+        select, input[type="password"] {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background: #1e293b;
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
         .status-badge {
             display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
             background: #334155;
             color: #94a3b8;
-            margin-bottom: 20px;
-            transition: all 0.3s;
+            margin-bottom: 15px;
         }
-        .status-badge.active {
-            background: #0284c7;
-            color: #ffffff;
-        }
-        .mic-btn-wrapper {
-            margin: 20px 0;
-        }
+        .status-badge.active { background: #0284c7; color: #ffffff; }
+
+        .mic-btn-wrapper { margin: 15px 0; }
         .mic-btn {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             border: none;
             background: #0284c7;
             color: white;
-            font-size: 2.2rem;
+            font-size: 2rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);
-        }
-        .mic-btn:hover {
-            transform: scale(1.05);
-            background: #0369a1;
         }
         .mic-btn.recording {
             background: #ef4444;
@@ -73,53 +77,53 @@
         }
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+            70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+
         .box {
             background: #0f172a;
             border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
             text-align: left;
-            min-height: 50px;
-            word-break: break-all;
+            min-height: 45px;
         }
-        .box-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        .box-text {
-            font-size: 1rem;
-            color: #f1f5f9;
-            line-height: 1.4;
-        }
+        .box-label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+        .box-text { font-size: 0.95rem; color: #f1f5f9; line-height: 1.4; margin-top: 4px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎤 AI 음성 인식 대화</h1>
+        <h1>🎙️ AI 멀티 모델 음성 비서</h1>
+
+        <!-- AI 모델 및 API 키 설정 -->
+        <div class="setting-box">
+            <label for="modelSelect">AI 모델 선택</label>
+            <select id="modelSelect">
+                <option value="gemini">Google Gemini 1.5 Flash</option>
+                <option value="chatgpt">OpenAI ChatGPT (GPT-4o-mini)</option>
+            </select>
+
+            <label for="apiKey">API Key (선택 사항)</label>
+            <input type="password" id="apiKey" placeholder="입력 시 실제 AI API와 연동됩니다">
+        </div>
+
         <div id="statusBadge" class="status-badge">버튼을 눌러 대화를 시작하세요</div>
-        
+
         <div class="mic-btn-wrapper">
-            <button id="voiceBtn" class="mic-btn" aria-label="마이크 버튼">🎤</button>
+            <button id="voiceBtn" class="mic-btn">🎤</button>
         </div>
 
         <div>
             <div class="box-label">내가 한 말</div>
-            <div class="box">
-                <div id="userInput" class="box-text">대기 중...</div>
-            </div>
+            <div class="box"><div id="userInput" class="box-text">대기 중...</div></div>
         </div>
 
-        <div style="margin-top: 15px;">
-            <div class="box-label">AI의 대답</div>
-            <div class="box">
-                <div id="aiResponse" class="box-text">음성을 인식하면 이곳에 대답이 표시됩니다.</div>
-            </div>
+        <div style="margin-top: 10px;">
+            <div class="box-label">AI 대답</div>
+            <div class="box"><div id="aiResponse" class="box-text">음성을 인식하면 선택한 AI 모델이 대답합니다.</div></div>
         </div>
     </div>
 
@@ -127,122 +131,129 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (!SpeechRecognition) {
-            document.getElementById('statusBadge').innerText = "이 브라우저는 음성 인식을 지원하지 않습니다.";
-            alert("Chrome 또는 Edge 브라우저에서 실행해 주세요.");
+            alert("Chrome 또는 Edge 브라우저에서 실행해주세요.");
         } else {
             const recognition = new SpeechRecognition();
             const voiceBtn = document.getElementById('voiceBtn');
             const statusBadge = document.getElementById('statusBadge');
             const userInput = document.getElementById('userInput');
             const aiResponse = document.getElementById('aiResponse');
+            const modelSelect = document.getElementById('modelSelect');
+            const apiKeyInput = document.getElementById('apiKey');
 
             let isListening = false;
 
-            // 음성 인식 설정
             recognition.lang = 'ko-KR';
-            recognition.continuous = false; // 브라우저 멈춤 방지를 위한 단구절 수신 모드
-            recognition.interimResults = true; // 말하는 중간 텍스트 실시간 반영
+            recognition.continuous = false;
+            recognition.interimResults = true;
 
-            // 마이크 버튼 클릭 이벤트
             voiceBtn.addEventListener('click', () => {
                 if (!isListening) {
-                    startListening();
+                    try {
+                        window.speechSynthesis.cancel();
+                        recognition.start();
+                    } catch (e) { console.error(e); }
                 } else {
                     stopListening();
                 }
             });
 
-            function startListening() {
-                try {
-                    window.speechSynthesis.cancel(); // 이전 AI 오디오 즉시 중단
-                    recognition.start();
-                } catch (e) {
-                    console.error("인식 시작 예외 처리:", e);
-                }
-            }
-
-            function stopListening() {
-                isListening = false;
-                try {
-                    recognition.stop();
-                } catch (e) {
-                    console.error("인식 중지 예외 처리:", e);
-                }
-                resetUI();
-            }
-
-            // 음성 인식 시작 시 이벤트
             recognition.onstart = () => {
                 isListening = true;
                 voiceBtn.classList.add('recording');
                 voiceBtn.innerText = '⏹️';
                 statusBadge.classList.add('active');
-                statusBadge.innerText = '음성을 듣고 있습니다...';
+                statusBadge.innerText = '듣고 있습니다...';
                 userInput.innerText = '듣는 중...';
             };
 
-            // 실시간 인식 결과 수신
             recognition.onresult = (event) => {
                 let transcript = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     transcript += event.results[i][0].transcript;
                 }
-
                 userInput.innerText = transcript;
 
-                // 최종 문장 수신 완료 시 처리
                 if (event.results[event.results.length - 1].isFinal) {
-                    const finalQuery = transcript.trim();
-                    if (finalQuery.length > 0) {
-                        processQueryAndRespond(finalQuery);
+                    const query = transcript.trim();
+                    if (query) {
+                        handleAIQuery(query);
                     }
                     stopListening();
                 }
             };
 
-            // 에러 처리
-            recognition.onerror = (event) => {
-                console.error('음성 인식 오류 발생:', event.error);
-                if (event.error === 'not-allowed') {
-                    alert('마이크 접근 권한이 필요합니다. 주소창 왼쪽 설정에서 마이크를 허용해주세요.');
-                } else if (event.error === 'no-speech') {
-                    statusBadge.innerText = '음성이 감지되지 않았습니다. 다시 눌러주세요.';
-                }
-                resetUI();
-            };
+            recognition.onerror = () => stopListening();
+            recognition.onend = () => stopListening();
 
-            // 인식 종료 이벤트
-            recognition.onend = () => {
-                resetUI();
-            };
-
-            function resetUI() {
+            function stopListening() {
                 isListening = false;
                 voiceBtn.classList.remove('recording');
                 voiceBtn.innerText = '🎤';
                 statusBadge.classList.remove('active');
-                if (statusBadge.innerText === '음성을 듣고 있습니다...') {
-                    statusBadge.innerText = '버튼을 눌러 대화를 시작하세요';
-                }
+                statusBadge.innerText = '버튼을 눌러 대화를 시작하세요';
             }
 
-            // AI 대답 생성 logic & TTS 음성 재생
-            function processQueryAndRespond(query) {
-                let reply = `'${query}'라고 말씀하셨군요! 대화를 계속 이어가보세요.`;
+            // 모델별 처리 및 API 요청
+            async function handleAIQuery(query) {
+                const selectedModel = modelSelect.value;
+                const apiKey = apiKeyInput.value.trim();
 
-                if (query.includes('안녕')) {
-                    reply = '안녕하세요! 만나서 반갑습니다. 무엇을 도와드릴까요?';
-                } else if (query.includes('이름')) {
-                    reply = '저는 웹 브라우저에서 동작하는 AI 음성 비서입니다.';
-                } else if (query.includes('시간') || query.includes('시')) {
-                    const now = new Date();
-                    reply = `현재 시각은 ${now.getHours()}시 ${now.getMinutes()}분입니다.`;
-                } else if (query.includes('날씨')) {
-                    reply = '오늘 날씨는 맑고 따뜻할 것으로 예상됩니다.';
+                aiResponse.innerText = "생각하는 중...";
+
+                let reply = "";
+
+                if (apiKey) {
+                    // API Key가 있을 경우 실제 LLM 호출
+                    try {
+                        if (selectedModel === 'gemini') {
+                            reply = await fetchGeminiResponse(query, apiKey);
+                        } else {
+                            reply = await fetchChatGPTResponse(query, apiKey);
+                        }
+                    } catch (err) {
+                        reply = "API 호출 중 오류가 발생했습니다. API 키를 확인해주세요.";
+                    }
+                } else {
+                    // API Key가 없을 경우 시뮬레이션 응답
+                    if (selectedModel === 'gemini') {
+                        reply = `[Gemini] "${query}"에 대한 대답입니다. Google Gemini 모델로 연결하려면 API 키를 입력하세요.`;
+                    } else {
+                        reply = `[ChatGPT] "${query}"에 대한 대답입니다. OpenAI ChatGPT 모델로 연결하려면 API 키를 입력하세요.`;
+                    }
                 }
 
                 aiResponse.innerText = reply;
                 speak(reply);
+            }
+
+            // Gemini API 호출
+            async function fetchGeminiResponse(prompt, key) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            }
+
+            // ChatGPT API 호출
+            async function fetchChatGPTResponse(prompt, key) {
+                const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${key}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{ role: 'user', content: prompt }]
+                    })
+                });
+                const data = await res.json();
+                return data.choices[0].message.content;
             }
 
             // 음성 출력 (TTS)
@@ -252,7 +263,6 @@
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'ko-KR';
                     utterance.rate = 1.0;
-                    utterance.pitch = 1.0;
                     window.speechSynthesis.speak(utterance);
                 }
             }
