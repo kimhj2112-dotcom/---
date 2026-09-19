@@ -228,6 +228,7 @@
             }
 
            // Gemini API 호출 (230번 줄 아래에 작성)
+// Gemini API 호출 함수
 async function fetchGeminiResponse(prompt, apiKey) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
@@ -246,15 +247,13 @@ async function fetchGeminiResponse(prompt, apiKey) {
 
         const data = await response.json();
 
-        // 응답 상태가 정상(200번대)이 아닐 경우 에러 던지기
         if (!response.ok) {
             console.error("Gemini API 서버 에러:", data);
             throw new Error(data.error?.message || `상태 코드: ${response.status}`);
         }
 
-        // 정상 응답 시 텍스트 반환
         return data.candidates[0].content.parts[0].text;
-        
+
     } catch (error) {
         console.error("Gemini API 호출 중 오류:", error);
         return `[오류 발생] Gemini API 호출에 실패했습니다. (${error.message})`;
