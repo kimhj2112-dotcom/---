@@ -227,33 +227,38 @@
                 speak(reply);
             }
 
-            // Gemini API 호출
-            async function fetchGeminiResponse(prompt, apiKey) {
-    // Gemini API 엔드포인트 URL (키를 URL 파라미터로 전달)
+           // Gemini API 호출 (230번 줄 아래에 작성)
+async function fetchGeminiResponse(prompt, apiKey) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            contents: [{
-                parts: [{
-                    text: prompt
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: prompt }]
                 }]
-            }]
-        })
-    });
+            })
+        });
 
-    if (!response.ok) {
-        throw new Error(`API 요청 실패: 상태 코드 ${response.status}`);
+        const data = await response.json();
+
+        // 응답 상태가 정상(200번대)이 아닐 경우 에러 던지기
+        if (!response.ok) {
+            console.error("Gemini API 서버 에러:", data);
+            throw new Error(data.error?.message || `상태 코드: ${response.status}`);
+        }
+
+        // 정상 응답 시 텍스트 반환
+        return data.candidates[0].content.parts[0].text;
+        
+    } catch (error) {
+        console.error("Gemini API 호출 중 오류:", error);
+        return `[오류 발생] Gemini API 호출에 실패했습니다. (${error.message})`;
     }
-
-    const data = await response.json();
-    
-    // 응답 데이터에서 텍스트 추출
-    return data.candidates[0].content.parts[0].text;
 }
 
             // ChatGPT API 호출
